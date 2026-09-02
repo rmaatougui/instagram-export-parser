@@ -1,0 +1,40 @@
+[
+  {
+    "string_map_data": {
+      "Comment": {
+        "href": "",
+        "value": "Nice example!",
+        "timestamp": 0
+      },
+      "Media Owner": {
+        "href": "",
+        "value": "example_creator",
+        "timestamp": 0
+      },
+      "Time": {
+        "href": "",
+        "value": "",
+        "timestamp": 1735819500
+      }
+    }
+  },
+  {
+    "string_map_data": {
+      "Comment": {
+        "href": "",
+        "value": "Sample comment.",
+        "timestamp": 0
+      },
+      "Media Owner": {
+        "href": "",
+        "value": "demo_kitchen",
+        "timestamp": 0
+      },
+      "Time": {
+        "href": "",
+        "value": "",
+        "timestamp": 1736147100
+      }
+    }
+  }
+]

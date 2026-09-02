@@ -1,0 +1,236 @@
+[
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/p/EXAMPLEAD1/"
+      },
+      {
+        "label": "Caption",
+        "value": "Example Corp: the example widget, now in three sizes."
+      },
+      {
+        "label": "Ad library public URL",
+        "value": "https://www.facebook.com/ads/library/?id=000000000000001"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Example Corp"
+              },
+              {
+                "label": "Username",
+                "value": "examplecorp"
+              },
+              {
+                "label": "URL",
+                "value": "https://www.example.com/"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1735718700
+  },
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/p/EXAMPLEAD2/"
+      },
+      {
+        "label": "Caption",
+        "value": "Sample Brand Co sample sale this week only."
+      },
+      {
+        "label": "Ad library public URL",
+        "value": "https://www.facebook.com/ads/library/?id=000000000000002"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Sample Brand Co"
+              },
+              {
+                "label": "Username",
+                "value": "samplebrand"
+              },
+              {
+                "label": "URL",
+                "value": "https://www.example.com/sample/"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1735821000
+  },
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/p/EXAMPLEAD3/"
+      },
+      {
+        "label": "Caption",
+        "value": "Example Corp spring collection."
+      },
+      {
+        "label": "Ad library public URL",
+        "value": "https://www.facebook.com/ads/library/?id=000000000000003"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Example Corp"
+              },
+              {
+                "label": "Username",
+                "value": "examplecorp"
+              },
+              {
+                "label": "URL",
+                "value": "https://www.example.com/"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1735931700
+  },
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/p/EXAMPLEAD4/"
+      },
+      {
+        "label": "Caption",
+        "value": "Acme Outlet clearance on example goods."
+      },
+      {
+        "label": "Ad library public URL",
+        "value": "https://www.facebook.com/ads/library/?id=000000000000004"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Acme Outlet"
+              },
+              {
+                "label": "Username",
+                "value": "acmeoutlet"
+              },
+              {
+                "label": "URL",
+                "value": "https://www.example.com/acme/"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1736113200
+  },
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/p/EXAMPLEAD5/"
+      },
+      {
+        "label": "Caption",
+        "value": "Sample Brand Co: free shipping on sample orders."
+      },
+      {
+        "label": "Ad library public URL",
+        "value": "https://www.facebook.com/ads/library/?id=000000000000005"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Sample Brand Co"
+              },
+              {
+                "label": "Username",
+                "value": "samplebrand"
+              },
+              {
+                "label": "URL",
+                "value": "https://www.example.com/sample/"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1736150100
+  },
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/p/EXAMPLEAD6/"
+      },
+      {
+        "label": "Caption",
+        "value": "Example Corp weekend offer."
+      },
+      {
+        "label": "Ad library public URL",
+        "value": "https://www.facebook.com/ads/library/?id=000000000000006"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Example Corp"
+              },
+              {
+                "label": "Username",
+                "value": "examplecorp"
+              },
+              {
+                "label": "URL",
+                "value": "https://www.example.com/"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1736255400
+  }
+]

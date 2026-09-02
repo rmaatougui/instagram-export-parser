@@ -1,0 +1,37 @@
+{
+  "relationships_following": [
+    {
+      "title": "example_creator",
+      "media_list_data": [],
+      "string_list_data": [
+        {
+          "href": "https://www.instagram.com/example_creator",
+          "value": "example_creator",
+          "timestamp": 1735725600
+        }
+      ]
+    },
+    {
+      "title": "sample_photographer",
+      "media_list_data": [],
+      "string_list_data": [
+        {
+          "href": "https://www.instagram.com/sample_photographer",
+          "value": "sample_photographer",
+          "timestamp": 1735812000
+        }
+      ]
+    },
+    {
+      "title": "demo_kitchen",
+      "media_list_data": [],
+      "string_list_data": [
+        {
+          "href": "https://www.instagram.com/demo_kitchen",
+          "value": "demo_kitchen",
+          "timestamp": 1735898400
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "contacts_contact_info": [
+    {
+      "title": "Example Contact One",
+      "media_map_data": {},
+      "string_map_data": {
+        "First Name": {
+          "href": "",
+          "value": "Example",
+          "timestamp": 0
+        },
+        "Contact Information": {
+          "href": "",
+          "value": "contact_one@example.com",
+          "timestamp": 0
+        }
+      }
+    },
+    {
+      "title": "Sample Contact Two",
+      "media_map_data": {},
+      "string_map_data": {
+        "First Name": {
+          "href": "",
+          "value": "Sample",
+          "timestamp": 0
+        },
+        "Contact Information": {
+          "href": "",
+          "value": "+1 555 0100",
+          "timestamp": 0
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "account_history_registration_info": [
+    {
+      "title": "",
+      "media_map_data": {},
+      "string_map_data": {
+        "Username": {
+          "href": "",
+          "value": "example_user",
+          "timestamp": 0
+        },
+        "Time": {
+          "href": "",
+          "value": "",
+          "timestamp": 1735722000
+        }
+      }
+    }
+  ]
+}

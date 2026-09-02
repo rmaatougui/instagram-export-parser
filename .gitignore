@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+*.log
+
+# A local Instagram export, if you keep one next to the repository to point
+# IG_EXPORT_PATH at. Never commit an export: it is someone's private data.
+/export/
+/exports/
+*.zip

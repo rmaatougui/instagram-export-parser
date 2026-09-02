@@ -1,0 +1,23 @@
+{
+  "fbid": "0",
+  "label_values": [
+    {
+      "label": "Location",
+      "dict": [
+        {
+          "label": "Country",
+          "value": "Exampleland"
+        },
+        {
+          "label": "Region",
+          "value": "Example Region"
+        },
+        {
+          "label": "City",
+          "value": "Example City"
+        }
+      ]
+    }
+  ],
+  "media": []
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "label_values": [
+      {
+        "label": "Device ID",
+        "value": "example-device-0001"
+      },
+      {
+        "label": "Camera SDK",
+        "value": "example"
+      }
+    ],
+    "media": [],
+    "timestamp": 1735718460
+  },
+  {
+    "label_values": [
+      {
+        "label": "Device ID",
+        "value": "example-device-0001"
+      },
+      {
+        "label": "Camera SDK",
+        "value": "example"
+      }
+    ],
+    "media": [],
+    "timestamp": 1736020860
+  },
+  {
+    "label_values": [
+      {
+        "label": "Device ID",
+        "value": "example-device-0002"
+      },
+      {
+        "label": "Camera SDK",
+        "value": "example"
+      }
+    ],
+    "media": [],
+    "timestamp": 1736254920
+  }
+]

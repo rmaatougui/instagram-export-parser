@@ -1,0 +1,17 @@
+{
+  "fbid": "0",
+  "label_values": [
+    {
+      "label": "Name",
+      "vec": [
+        {
+          "value": "Example interest group"
+        },
+        {
+          "value": "Sample audience segment"
+        }
+      ]
+    }
+  ],
+  "media": []
+}

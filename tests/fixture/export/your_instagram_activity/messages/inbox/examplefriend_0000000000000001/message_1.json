@@ -1,0 +1,25 @@
+{
+  "participants": [
+    {
+      "name": "Example Friend"
+    },
+    {
+      "name": "Example User"
+    }
+  ],
+  "messages": [
+    {
+      "sender_name": "Example Friend",
+      "timestamp_ms": 1736100000000,
+      "content": "Hello from the synthetic fixture."
+    },
+    {
+      "sender_name": "Example User",
+      "timestamp_ms": 1736100240000,
+      "content": "Hi. Nothing here is real."
+    }
+  ],
+  "title": "Example Friend",
+  "is_still_participant": true,
+  "thread_path": "inbox/examplefriend_0000000000000001"
+}

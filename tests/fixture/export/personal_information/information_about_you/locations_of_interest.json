@@ -1,0 +1,21 @@
+{
+  "fbid": "0",
+  "label_values": [
+    {
+      "label": "Locations of interest",
+      "vec": [
+        {
+          "value": "Example City"
+        },
+        {
+          "value": "Sample Town"
+        }
+      ]
+    },
+    {
+      "label": "Usage explanation",
+      "value": "Example explanation text."
+    }
+  ],
+  "media": []
+}

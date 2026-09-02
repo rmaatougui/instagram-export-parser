@@ -1,0 +1,110 @@
+[
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/stories/example_creator/EXAMPLE/"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Example Creator"
+              },
+              {
+                "label": "Username",
+                "value": "example_creator"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1735722000
+  },
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/stories/demo_kitchen/EXAMPLE/"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Demo Kitchen"
+              },
+              {
+                "label": "Username",
+                "value": "demo_kitchen"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1735808400
+  },
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/stories/example_creator/EXAMPLE/"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Example Creator"
+              },
+              {
+                "label": "Username",
+                "value": "example_creator"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1735981200
+  },
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/stories/example_creator/EXAMPLE/"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Example Creator"
+              },
+              {
+                "label": "Username",
+                "value": "example_creator"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1736154000
+  }
+]

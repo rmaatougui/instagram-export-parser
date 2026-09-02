@@ -1,0 +1,14 @@
+{
+  "fbid": "0",
+  "label_values": [
+    {
+      "label": "Removed categories",
+      "vec": [
+        {
+          "value": "Example category"
+        }
+      ]
+    }
+  ],
+  "media": []
+}

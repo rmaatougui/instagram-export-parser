@@ -1,0 +1,46 @@
+[
+  {
+    "label_values": [
+      {
+        "label": "Title of website page you visited",
+        "value": "Example Corp - Widgets"
+      },
+      {
+        "label": "Website link you visited",
+        "value": "https://www.example.com/widgets?fbclid=EXAMPLE"
+      },
+      {
+        "label": "Website session start time",
+        "value": "Jan 03, 2025 7:16 pm"
+      },
+      {
+        "label": "Website session end time",
+        "value": "Jan 03, 2025 7:18 pm"
+      }
+    ],
+    "media": [],
+    "timestamp": 1735931760
+  },
+  {
+    "label_values": [
+      {
+        "label": "Title of website page you visited",
+        "value": "Example Creator - Recipes"
+      },
+      {
+        "label": "Website link you visited",
+        "value": "https://www.example.com/recipes"
+      },
+      {
+        "label": "Website session start time",
+        "value": "Jan 06, 2025 8:00 am"
+      },
+      {
+        "label": "Website session end time",
+        "value": "Jan 06, 2025 8:03 am"
+      }
+    ],
+    "media": [],
+    "timestamp": 1736150400
+  }
+]

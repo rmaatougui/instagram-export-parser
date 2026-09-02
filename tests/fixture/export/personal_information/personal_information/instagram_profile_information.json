@@ -1,0 +1,18 @@
+{
+  "fbid": "0",
+  "label_values": [
+    {
+      "label": "Contact Syncing",
+      "value": "False"
+    },
+    {
+      "label": "First Country Code",
+      "value": "XX"
+    },
+    {
+      "label": "Last Login",
+      "timestamp_value": 1736280000
+    }
+  ],
+  "media": []
+}

@@ -1,0 +1,309 @@
+{
+  "files": {
+    "ads_information/ads_and_topics/ads_viewed.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "ads_information/ads_and_topics/posts_viewed.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "ads_information/ads_and_topics/videos_watched.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "ads_information/instagram_ads_and_businesses/ad_preferences.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media"
+      ]
+    },
+    "ads_information/instagram_ads_and_businesses/ads_about_meta.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media"
+      ]
+    },
+    "ads_information/instagram_ads_and_businesses/advertisers_using_your_activity_or_information.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media"
+      ]
+    },
+    "ads_information/instagram_ads_and_businesses/other_categories_used_to_reach_you.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media"
+      ]
+    },
+    "connections/contacts/synced_contacts.json": {
+      "keys": [
+        "contacts_contact_info"
+      ]
+    },
+    "connections/followers_and_following/followers_1.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "connections/followers_and_following/following.json": {
+      "keys": [
+        "relationships_following"
+      ]
+    },
+    "connections/followers_and_following/recent_follow_requests.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media",
+        "timestamp"
+      ]
+    },
+    "connections/followers_and_following/recently_unfollowed_profiles.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "logged_information/link_history/link_history.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "logged_information/past_instagram_insights/audience_insights.json": {
+      "keys": [
+        "organic_insights_audience"
+      ]
+    },
+    "logged_information/past_instagram_insights/content_interactions.json": {
+      "keys": [
+        "organic_insights_interactions"
+      ]
+    },
+    "logged_information/past_instagram_insights/profiles_reached.json": {
+      "keys": [
+        "organic_insights_reach"
+      ]
+    },
+    "logged_information/recent_searches/profile_searches.json": {
+      "keys": [
+        "searches_user"
+      ]
+    },
+    "personal_information/autofill_information/autofill_information.json": {
+      "keys": [
+        "ig_autofill_data"
+      ]
+    },
+    "personal_information/device_information/camera_information.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "personal_information/information_about_you/locations_of_interest.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media"
+      ]
+    },
+    "personal_information/information_about_you/profile_based_in.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media"
+      ]
+    },
+    "personal_information/personal_information/instagram_friend_map.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media"
+      ]
+    },
+    "personal_information/personal_information/instagram_profile_information.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media"
+      ]
+    },
+    "personal_information/personal_information/note_and_repost_interactions.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "personal_information/personal_information/personal_information.json": {
+      "keys": [
+        "profile_user"
+      ]
+    },
+    "preferences/settings/comments_allowed_from.json": {
+      "keys": [
+        "settings_allow_comments_from"
+      ]
+    },
+    "preferences/settings/notification_preferences.json": {
+      "keys": [
+        "settings_notification_preferences"
+      ]
+    },
+    "preferences/your_topics/your_ads_see_more/see_less_topics.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "security_and_login_information/login_and_profile_creation/last_known_location.json": {
+      "keys": [
+        "account_history_imprecise_last_known_location"
+      ]
+    },
+    "security_and_login_information/login_and_profile_creation/signup_details.json": {
+      "keys": [
+        "account_history_registration_info"
+      ]
+    },
+    "your_instagram_activity/ai/interest_categories.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "your_instagram_activity/comments/post_comments_1.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "your_instagram_activity/likes/liked_comments.json": {
+      "keys": [
+        "likes_comment_likes"
+      ]
+    },
+    "your_instagram_activity/likes/liked_posts.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "your_instagram_activity/monetization/eligibility.json": {
+      "keys": [
+        "monetization_eligibility"
+      ]
+    },
+    "your_instagram_activity/other_activity/your_information_download_requests.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media",
+        "timestamp"
+      ]
+    },
+    "your_instagram_activity/shopping/cart_items.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media"
+      ]
+    },
+    "your_instagram_activity/shopping/checkout_payment_information.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media",
+        "timestamp",
+        "title"
+      ]
+    },
+    "your_instagram_activity/shopping/recently_viewed_items.json": {
+      "keys": [
+        "fbid",
+        "label_values",
+        "media"
+      ]
+    },
+    "your_instagram_activity/story_interactions/stories_viewed.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "your_instagram_activity/story_interactions/story_likes.json": {
+      "keys": [
+        "<array>"
+      ]
+    },
+    "your_instagram_activity/subscriptions/show_exclusive_story_promo_setting.json": {
+      "keys": [
+        "subscriptions_show_story_teaser_setting"
+      ]
+    },
+    "your_instagram_activity/subscriptions/your_muted_story_teaser_creators.json": {
+      "keys": [
+        "subscriptions_muted_story_teaser_creators"
+      ]
+    },
+    "your_instagram_activity/threads/blocked_profiles.json": {
+      "keys": [
+        "text_post_app_text_post_app_blocked_users"
+      ]
+    },
+    "your_instagram_activity/threads/followers.json": {
+      "keys": [
+        "text_post_app_text_post_app_followers"
+      ]
+    },
+    "your_instagram_activity/threads/following.json": {
+      "keys": [
+        "text_post_app_text_post_app_following"
+      ]
+    },
+    "your_instagram_activity/threads/personal_information.json": {
+      "keys": [
+        "text_post_app_text_post_app_profile"
+      ]
+    },
+    "your_instagram_activity/threads/recent_follow_requests.json": {
+      "keys": [
+        "text_post_app_text_post_app_permanent_follow_requests"
+      ]
+    },
+    "your_instagram_activity/threads/threads_viewed.json": {
+      "keys": [
+        "text_post_app_text_post_app_posts_seen"
+      ]
+    },
+    "your_instagram_activity/threads/word_or_phrase_searches.json": {
+      "keys": [
+        "text_post_app_keyword"
+      ]
+    }
+  },
+  "folders": [
+    "ads_information/ads_and_topics",
+    "ads_information/instagram_ads_and_businesses",
+    "connections/contacts",
+    "connections/followers_and_following",
+    "logged_information/link_history",
+    "logged_information/past_instagram_insights",
+    "logged_information/recent_searches",
+    "personal_information/autofill_information",
+    "personal_information/device_information",
+    "personal_information/information_about_you",
+    "personal_information/personal_information",
+    "preferences/settings",
+    "preferences/your_topics/your_ads_see_more",
+    "security_and_login_information/login_and_profile_creation",
+    "your_instagram_activity/ai",
+    "your_instagram_activity/comments",
+    "your_instagram_activity/likes",
+    "your_instagram_activity/monetization",
+    "your_instagram_activity/other_activity",
+    "your_instagram_activity/shopping",
+    "your_instagram_activity/story_interactions",
+    "your_instagram_activity/subscriptions",
+    "your_instagram_activity/threads"
+  ]
+}

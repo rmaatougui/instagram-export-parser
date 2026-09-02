@@ -1,0 +1,32 @@
+[
+  {
+    "label_values": [
+      {
+        "label": "Interest",
+        "value": "The user might be interested in Cooking"
+      }
+    ],
+    "media": [],
+    "timestamp": 1736208000
+  },
+  {
+    "label_values": [
+      {
+        "label": "Interest",
+        "value": "The user might be interested in Gardening"
+      }
+    ],
+    "media": [],
+    "timestamp": 1736208000
+  },
+  {
+    "label_values": [
+      {
+        "label": "Interest",
+        "value": "The user might be interested in Astronomy"
+      }
+    ],
+    "media": [],
+    "timestamp": 1736208000
+  }
+]

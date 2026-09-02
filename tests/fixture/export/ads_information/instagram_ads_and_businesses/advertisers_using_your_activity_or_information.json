@@ -1,0 +1,35 @@
+{
+  "fbid": "0",
+  "label_values": [
+    {
+      "label": "Advertisers using your activity or information",
+      "vec": [
+        {
+          "value": "Example Corp"
+        },
+        {
+          "value": "Sample Brand Co"
+        },
+        {
+          "value": "Acme Outlet"
+        },
+        {
+          "value": "Widget Warehouse"
+        }
+      ]
+    },
+    {
+      "label": "Advertisers you have interacted with",
+      "vec": [
+        {
+          "value": "Example Corp"
+        }
+      ]
+    },
+    {
+      "label": "Marketers who have your information",
+      "vec": []
+    }
+  ],
+  "media": []
+}

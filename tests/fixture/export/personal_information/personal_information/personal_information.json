@@ -1,0 +1,30 @@
+{
+  "profile_user": [
+    {
+      "title": "",
+      "media_map_data": {},
+      "string_map_data": {
+        "Username": {
+          "href": "",
+          "value": "example_user",
+          "timestamp": 0
+        },
+        "Name": {
+          "href": "",
+          "value": "Example User",
+          "timestamp": 0
+        },
+        "Email": {
+          "href": "",
+          "value": "example_user@example.com",
+          "timestamp": 0
+        },
+        "Private Account": {
+          "href": "",
+          "value": "False",
+          "timestamp": 0
+        }
+      }
+    }
+  ]
+}

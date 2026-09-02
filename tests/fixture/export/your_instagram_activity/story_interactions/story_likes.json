@@ -1,0 +1,29 @@
+[
+  {
+    "media": [],
+    "label_values": [
+      {
+        "label": "URL",
+        "value": "https://www.instagram.com/stories/example_creator/EXAMPLE/"
+      },
+      {
+        "title": "Owner",
+        "dict": [
+          {
+            "dict": [
+              {
+                "label": "Name",
+                "value": "Example Creator"
+              },
+              {
+                "label": "Username",
+                "value": "example_creator"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "timestamp": 1735981260
+  }
+]
