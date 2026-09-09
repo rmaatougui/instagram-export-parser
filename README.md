@@ -1,10 +1,10 @@
 # instagram-export-parser
 
 The parser behind the Instagram report at [opt2in.com](https://opt2in.com),
-published as the one file it is: `report.js`, 4276 lines, no
+published as the one file it is: `report.js`, 4378 lines, no
 dependencies, and byte-for-byte the file the site serves at
 `https://opt2in.com/report/instagram/report.js` on the day of this build
-(2026-09-02; SHA-256 `34bec34c35b8541be0598ed7c7970f5b0a6ce523be489d319909e6f923a2e2ff`).
+(2026-09-09; SHA-256 `1ee4a16c5ec36c73c4386d58bb3ab9595eb7436672957bd7aed3318368b6bf6e`).
 
 It takes the ZIP that Meta hands you when you download your Instagram
 information and turns it into a plain JavaScript object: who advertised to
@@ -43,7 +43,7 @@ grep -nwE 'fetch|XMLHttpRequest|sendBeacon|WebSocket|EventSource' report.js
 At the time of this build the second search returned:
 
 ```
-3731:// with NO network fetch (fetching would broadcast click history off-device
+3808:// with NO network fetch (fetching would broadcast click history off-device
 ```
 
 The only browser API the file touches is `DOMParser`, for the HTML variant
@@ -281,6 +281,19 @@ const files = await loadZipFiles(zip, (done, total) => {}, 'instagram-....zip');
 const report = extractAll(files);
 ```
 
+`extractAll(files)` is the whole report. The other five exports are the pieces
+it is built from, exported so a caller can use one without the rest:
+
+- `loadZipFiles(zip, onProgress, filename)` — read a zip into the `files` dict
+  every other function takes.
+- `parseExportDate(files)` — the date Meta generated the export.
+- `fixMetaMojibakeString(s)` / `fixMetaMojibakeDeep(obj)` — repair Meta's
+  double-encoded UTF-8, in one string or throughout a structure.
+- `extractSocialGraph(files)` — followers, following, and who does not follow
+  back. Returns an honest empty shape when the export's follower list is
+  incomplete, which Meta does ship: it reports what it found rather than
+  guessing at the difference.
+
 Under Node there is no `DOMParser`, so the HTML branches return their empty
 shapes; the JSON path is complete.
 
@@ -306,9 +319,9 @@ can never overwrite the recorded shape.
 
 ## Why one file
 
-`report.js` is one file of 4276 lines: an IIFE with about thirty
+`report.js` is one file of 4378 lines: an IIFE with about thirty
 private helpers, the 37 extractors, the `extractAll`
-orchestrator, and a five-function export guarded on `typeof module`. It is
+orchestrator, and a six-function export guarded on `typeof module`. It is
 not split because the site has no build step, and without a bundler
 closure-scoped helpers cannot cross `<script>` files except through a global
 namespace and a load-order contract, which is a worse structure than one long
@@ -317,6 +330,25 @@ true: a second platform's parser needs to share the helpers; the file passes
 10,000 lines; or the codebase gains a second regular contributor. None is
 true today. Keeping it as one file here also keeps the check that matters a
 one-line `diff`.
+
+## Changes since 1.0.0
+
+**2.0.0** — the first refresh since the 2026-09-02 publish. Breaking, because
+the report object lost fields:
+
+- `computeMoney` no longer emits `annual_impressions` or `ad_revenue`. Nothing
+  is lost: `annual_impressions` is the same number as the impression count the
+  report already carries, and `ad_revenue` was a second name for `total`.
+- New export: `extractSocialGraph(files)` — followers, following, and who does
+  not follow back. It returns an honest empty shape when Meta's export ships an
+  incomplete follower list, which it does; it reports what it found rather than
+  guessing at the difference.
+- `scripts/schema-check.js` no longer defines its own shape rule. The rule now
+  ships as `scripts/_meta-shape.js`, copied from the same source the parser's
+  own checks use, so the two cannot drift apart.
+
+If you cloned 1.0.0 and read either removed field, derive it as described above
+before upgrading.
 
 ## License
 

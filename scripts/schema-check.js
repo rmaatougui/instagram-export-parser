@@ -28,14 +28,18 @@
 const fs = require('fs');
 const path = require('path');
 const { resolveExportRoot, usingFixture, walkExport } = require('../tests/_lib/load-export');
+const { canonicalKeys } = require('./_meta-shape');
 
 const SNAPSHOT_PATH = path.join(__dirname, '..', 'tests', 'meta-schema-snapshot.json');
 const SKIP_RE = /^your_instagram_activity\/messages\//i;
 
+// scripts/_meta-shape.js is copied in by the build, byte for byte from the
+// same rule the three internal canaries share. Do not re-implement it here:
+// a second copy is what made this file disagree with its own snapshot about
+// every bare-record file (see the comment in _meta-shape.js for why a lone
+// record reads as '<array>').
 function topLevelKeysOf(obj) {
-  if (Array.isArray(obj)) return ['<array>'];
-  if (obj && typeof obj === 'object') return Object.keys(obj).sort();
-  return ['<' + typeof obj + '>'];
+  return canonicalKeys(obj);
 }
 
 function buildShape(files) {

@@ -17,30 +17,22 @@
     },
     "ads_information/instagram_ads_and_businesses/ad_preferences.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media"
+        "<array>"
       ]
     },
     "ads_information/instagram_ads_and_businesses/ads_about_meta.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media"
+        "<array>"
       ]
     },
     "ads_information/instagram_ads_and_businesses/advertisers_using_your_activity_or_information.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media"
+        "<array>"
       ]
     },
     "ads_information/instagram_ads_and_businesses/other_categories_used_to_reach_you.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media"
+        "<array>"
       ]
     },
     "connections/contacts/synced_contacts.json": {
@@ -60,10 +52,7 @@
     },
     "connections/followers_and_following/recent_follow_requests.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media",
-        "timestamp"
+        "<array>"
       ]
     },
     "connections/followers_and_following/recently_unfollowed_profiles.json": {
@@ -108,30 +97,22 @@
     },
     "personal_information/information_about_you/locations_of_interest.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media"
+        "<array>"
       ]
     },
     "personal_information/information_about_you/profile_based_in.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media"
+        "<array>"
       ]
     },
     "personal_information/personal_information/instagram_friend_map.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media"
+        "<array>"
       ]
     },
     "personal_information/personal_information/instagram_profile_information.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media"
+        "<array>"
       ]
     },
     "personal_information/personal_information/note_and_repost_interactions.json": {
@@ -196,33 +177,22 @@
     },
     "your_instagram_activity/other_activity/your_information_download_requests.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media",
-        "timestamp"
+        "<array>"
       ]
     },
     "your_instagram_activity/shopping/cart_items.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media"
+        "<array>"
       ]
     },
     "your_instagram_activity/shopping/checkout_payment_information.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media",
-        "timestamp",
-        "title"
+        "<array>"
       ]
     },
     "your_instagram_activity/shopping/recently_viewed_items.json": {
       "keys": [
-        "fbid",
-        "label_values",
-        "media"
+        "<array>"
       ]
     },
     "your_instagram_activity/story_interactions/stories_viewed.json": {

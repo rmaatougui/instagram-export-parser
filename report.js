@@ -84,7 +84,6 @@
   let ACTIVE_PLATFORM = PLATFORMS.instagram;
 
   const IG_BASE_CPM = 12;  // kept for back-compat refs; ACTIVE_PLATFORM.cpm is canonical
-  const PURCHASE_EVENT_TYPES = new Set(['PURCHASE', 'INITIATE_CHECKOUT', 'ADD_TO_CART']);
   const ADS_SEEN_PER_LIKE = 3;
 
   const OFF_META_DOMAINS = {
@@ -2569,14 +2568,15 @@
     const ad_annualized = ad_window_days_exact > 0;
     const annualScale = ad_annualized ? (365 / ad_window_days_exact) : 0;
     const ad_impressions = Math.round(period_ad_impressions * annualScale);
-    // Clicks: a single click has no span of its own — annualize against the
-    // widest known window (its own span or the ad window), floored at 1 day,
-    // never against a zero/sub-day span that would inflate 1 click into
-    // hundreds per year.
-    const clickDenomRaw = Math.max(adsClicked.days_exact || 0, ad_window_days_exact || 0);
-    const ad_clicks_annual = (adsClicked.count > 0 && clickDenomRaw > 0)
-      ? Math.round(adsClicked.count * 365 / Math.max(1, clickDenomRaw)) : 0;
-
+    // NO annualized click figure is emitted (removed 2026-09-07). There used
+    // to be an ad_clicks_annual here. Nothing read it, and it could not have
+    // been read honestly: Instagram prices no clicks, the count behind it is
+    // outbound LINK taps rather than ad taps, and the CPC that would turn it
+    // into money has no source. That is why the dashboard's click line was
+    // removed on 2026-08-06 (dev/VALUE-36-FIX-PLAN-2026-08-06.md) -- this was
+    // the producer nobody switched off with it. The raw ads_clicked_count and
+    // its source window are still emitted below; a consumer that finds an
+    // honest basis for annualizing them can do it there.
     return {
       posts_viewed: posts.count,
       videos_watched: videos.count,
@@ -2596,7 +2596,6 @@
       feed_window_last: ad_window_last,
       period_ad_impressions,
       ad_impressions,
-      ad_clicks_annual,
     };
   }
 
@@ -3638,6 +3637,15 @@
       recently_unfollowed:    { entries: [], total: 0 },
       recent_follow_requests: { entries: [], total: 0 },
       blocked:                { entries: [], total: 0 },
+      // 2026-09-08: the follower arithmetic every "unfollower checker" sells,
+      // computed only when the follower list is provably complete (see
+      // computeFollowBack at the end of this extractor). `reason` names why it
+      // was NOT computed so the card can say what to re-export instead of
+      // printing a wrong list. Entries are scrubbed from saved reports like
+      // every other identity list here (save-report.js, build-demo.js).
+      not_following_back:     { entries: [], total: 0, verified: false, reason: 'not_computed' },
+      fans:                   { entries: [], total: 0 },
+      mutual_count:           0,
     };
 
     const fol = loadJson(files, 'connections/followers_and_following/following.json');
@@ -3723,6 +3731,75 @@
     }
     walkLabelValuesFile('connections/followers_and_following/recently_unfollowed_profiles.json', out.recently_unfollowed);
     walkLabelValuesFile('connections/followers_and_following/recent_follow_requests.json', out.recent_follow_requests);
+
+    // ── Who does not follow you back ──────────────────────────────────────
+    // following minus followers: the arithmetic every unfollower checker
+    // sells. It is only honest when the follower list is COMPLETE, and Meta's
+    // export makes that conditional in two ways seen on real files:
+    //   1. An export requested for a date range carries only the follows
+    //      inside the range. One measured export carried 106 of 6,110.
+    //   2. Even an all-history export can ship a follower file that holds only
+    //      the last few weeks of new followers. One measured export had 3
+    //      followers, all dated within 32 days of the request, against 990 in
+    //      Insights, while following.json reached back to 2012.
+    // So the download-request record alone cannot clear the list. Gate, in
+    // order: both lists exist; the most recent request record, when present,
+    // did not ask for a date range; when Insights carry a follower total the
+    // list covers at least 90% of it (churn since the quarterly snapshot);
+    // and without Insights, the list must reach further back than the last
+    // 60 days whenever the follow list does (a complete list on an account
+    // older than the window contains old followers; a brand-new account has
+    // nothing old on either side and passes). Anything short of that stays an
+    // honest empty state with the reason, never a wrong list (CLAUDE.md rule
+    // 5). Deactivated accounts are a caveat, not a gate: following.json keeps
+    // edges to accounts Meta has since disabled, nothing in the export says
+    // which, so the card says so in words and links each name. Matching is
+    // case-insensitive on the username.
+    (function computeFollowBack() {
+      const nfb = out.not_following_back;
+      let reason = '';
+      if (out.following.total === 0) reason = 'no_following_file';
+      else if (out.followers.total === 0) reason = 'no_followers_file';
+      if (!reason) {
+        let req = null;
+        try { req = extractDownloadRequest(files); } catch (e) { req = null; }
+        if (req && req.has_export_request && req.requested_start_ts !== undefined
+            && !req.requested_start_is_all_history) reason = 'range_partial';
+      }
+      let insightsTotal = 0;
+      if (!reason) {
+        let aud = null;
+        try { aud = extractAudience(files); } catch (e) { aud = null; }
+        insightsTotal = aud && aud.total_followers
+          ? parseInt(String(aud.total_followers).replace(/[^\d]/g, ''), 10) || 0
+          : 0;
+        if (insightsTotal > 0 && out.followers.total < insightsTotal * 0.9) reason = 'followers_file_short';
+      }
+      if (!reason && insightsTotal === 0) {
+        const WINDOW = 60 * 86400;
+        const tsOf = (e) => Number(e && e.ts) || 0;
+        const minTs = (arr) => arr.reduce((m, e) => (tsOf(e) > 0 && (m === 0 || tsOf(e) < m) ? tsOf(e) : m), 0);
+        const maxTs = (arr) => arr.reduce((m, e) => (tsOf(e) > m ? tsOf(e) : m), 0);
+        const newest = Math.max(maxTs(out.followers.entries), maxTs(out.following.entries));
+        const oldestFollower = minTs(out.followers.entries);
+        const oldestFollowing = minTs(out.following.entries);
+        if (newest > 0 && oldestFollower > 0 && oldestFollowing > 0
+            && newest - oldestFollower < WINDOW && newest - oldestFollowing >= WINDOW) {
+          reason = 'followers_recent_only';
+        }
+      }
+      if (reason) { nfb.reason = reason; return; }
+      const lower = (u) => String(u || '').toLowerCase();
+      const followerSet = new Set(out.followers.entries.map((e) => lower(e.username)));
+      const followingSet = new Set(out.following.entries.map((e) => lower(e.username)));
+      nfb.entries = out.following.entries.filter((e) => !followerSet.has(lower(e.username)));
+      nfb.total = nfb.entries.length;
+      nfb.verified = true;
+      nfb.reason = '';
+      out.fans.entries = out.followers.entries.filter((e) => !followingSet.has(lower(e.username)));
+      out.fans.total = out.fans.entries.length;
+      out.mutual_count = out.following.total - nfb.total;
+    })();
 
     return out;
   }
@@ -4029,7 +4106,7 @@
         if (!basename.startsWith('message_') || !basename.endsWith('.json')) continue;
         const d = files[relPath];
         if (!d || !d.messages) continue;
-        // Folder name = conversation id (e.g. "adamsnyder_997741788288518")
+        // Folder name = conversation id (e.g. "examplehandle_000000000000000")
         const rest = relPath.substring(src.prefix.length);
         const convoFolder = rest.split('/')[0] || '';
         if (!convoMap.has(convoFolder)) {
@@ -4139,49 +4216,70 @@
     const cpm = cpmTier.cpm || ACTIVE_PLATFORM.cpm;
     const ad_impressions = fi.ad_impressions || 0;
     const ad_revenue = ad_impressions * cpm / 1000;
-    const advertiser_count = (data.advertisers || {}).total_unique || 0;
-    // Behavioral-signal count, for commentary only (not monetary).
-    let purchase_events = 0;
-    for (const app of (data.off_meta || [])) {
-      for (const t in app.types) {
-        if (PURCHASE_EVENT_TYPES.has(t)) purchase_events += app.types[t];
-      }
-    }
-    // Daily/monthly breakdown from the actual feed-impression window.
+    // Daily breakdown from the actual feed-impression window.
     // RATES use the exact fractional window — the same denominator that
     // produced annual_impressions — so per-day x 365 reconciles with the
     // per-year row on screen. The rounded integer stays for labels only.
-    const wd = fi.feed_window_days || 0;
-    const wdExact = fi.ad_window_days_exact || wd;
+    const wdExact = fi.ad_window_days_exact || fi.feed_window_days || 0;
     const period_ads = fi.period_ad_impressions || 0;
     const daily_ads = wdExact > 0 ? period_ads / wdExact : 0;
-    const monthly_ads = daily_ads * 30;
-    const daily_total = wdExact > 0 ? (fi.total_views || 0) / wdExact : 0;
-    const monthly_total = daily_total * 30;
     const daily_revenue = daily_ads * cpm / 1000;
-    const monthly_revenue = monthly_ads * cpm / 1000;
+    // WHAT THIS EMITS, and what it deliberately does not (trimmed 2026-09-07).
+    //
+    // This used to return twenty-two fields. Five were read; the other
+    // seventeen were mirrors of numbers that are already in this same output
+    // under feed_impressions or advertisers, monthly figures that are the
+    // daily ones times thirty, ad_revenue (a second name for total), and
+    // likes_per_year, a hard zero kept for a "legacy render branch and the
+    // analyst context builder" that do not read it -- netlify/functions/
+    // explain.js never touches this object. Seventeen unread fields beside
+    // a handful of load-bearing ones is how a later reader ends up preserving
+    // the wrong ones.
+    //
+    // WHO READS WHAT. Rechecked 2026-09-08, and it had already moved: the
+    // 2026-09-07 version of this block said _ledger-build.js read four of these
+    // five. It merged the same day as the ledger's flat-rate removal, which
+    // deleted those reads, so the map was stale within hours of being written.
+    // The point of this block is to stop a later reader preserving the wrong
+    // fields, so a wrong map here is worse than no map.
+    //
+    //   total              -> report/instagram/v2/v2-data-adapter.js (fallback
+    //                         when math.cpmRevenueUsd is absent) and
+    //                         tests/ledger/report-integration.test.js.
+    //                         LIVE.
+    //   annual_impressions -> netlify/functions/_ledger-build.js:537,539. LIVE.
+    //   daily_ads          -> netlify/functions/_ledger-build.js:543. LIVE.
+    //   daily_revenue      -> NO live reader. Kept so the dollars this function
+    //                         emits stay checkable by hand against daily_ads
+    //                         and ad_cpm.
+    //   ad_cpm             -> NO live reader. Kept for the same reason: it is
+    //                         the only rate that makes `total` recomputable.
+    //                         READ THIS BEFORE REUSING IT -- it is report.js's
+    //                         flat market tier, the basis the ledger BANNED on
+    //                         2026-09-01. _ledger-build.js now names it only in
+    //                         comments explaining that it refuses to price at
+    //                         it. Nothing downstream should start pricing here.
+    //   platform           -> no reader, and it stays anyway: it is the only
+    //                         thing in this object that says which engine
+    //                         produced the numbers, and report.js ships as a
+    //                         public parser (dev/opensource-parser/).
+    //
+    // So two of the six emitted fields have no consumer today and are kept
+    // deliberately, for auditability rather than for a caller. Dropping them is
+    // a further breaking change to the published parser output and is Robert's
+    // call, not a tidy-up.
+    //
+    // Nothing is lost. Every removed field is still derivable from what the
+    // report emits: the counts and windows from data.feed_impressions, the
+    // advertiser count from data.advertisers.total_unique, the monthlies from
+    // the dailies, ad_revenue from total.
     return {
       platform: ACTIVE_PLATFORM.name,
-      posts_viewed: fi.posts_viewed || 0,
-      videos_watched: fi.videos_watched || 0,
-      total_views: fi.total_views || 0,
-      feed_window_days: wd,
-      feed_window_days_exact: wdExact,
-      feed_window_first: fi.feed_window_first || 0,
-      feed_window_last: fi.feed_window_last || 0,
-      period_ad_impressions: period_ads,
       annual_impressions: ad_impressions,
-      daily_ads, monthly_ads,
-      daily_total, monthly_total,
-      daily_revenue, monthly_revenue,
+      daily_ads,
+      daily_revenue,
       ad_cpm: cpm,
-      ad_revenue,
-      advertiser_count,
-      purchase_events,
       total: ad_revenue,
-      // Legacy field kept so older render branches and the analyst context
-      // builder don't break — empty value, formula no longer uses it.
-      likes_per_year: 0,
     };
   }
 
@@ -4266,6 +4364,10 @@
     loadZipFiles,
     extractAll,
     parseExportDate,
+    // Exposed for tests/adapter/not-following-back.test.js, which feeds
+    // hand-built export files through the REAL extractor (fixture-free, so it
+    // can gate the build). Browser-harmless extra method.
+    extractSocialGraph,
     // Exposed so the parser test harness can reuse the REAL mojibake fix
     // instead of mirroring it (no drift). Browser-harmless extra methods.
     fixMetaMojibakeString,

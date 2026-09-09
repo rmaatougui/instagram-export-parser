@@ -1,7 +1,7 @@
 // tests/smoke.test.js
 // The claims the README makes about report.js itself, pinned as assertions so
 // a refresh of the file cannot quietly falsify them: it loads under Node with
-// no side effects, it exports exactly the five documented functions, and it
+// no side effects, it exports exactly the six documented functions, and it
 // contains no network or storage call site. The searches here are the same
 // ones the README tells a reader to run by hand.
 'use strict';
@@ -16,10 +16,10 @@ const lines = source.split('\n');
 const isComment = (l) => /^\s*(\/\/|\*|\/\*)/.test(l);
 const code = lines.filter((l) => !isComment(l));
 
-test('report.js loads under Node and exports exactly the five documented functions', () => {
+test('report.js loads under Node and exports exactly the six documented functions', () => {
   const parser = require('./_lib/parser');
   assert.deepEqual(Object.keys(parser).sort(), [
-    'extractAll', 'fixMetaMojibakeDeep', 'fixMetaMojibakeString', 'loadZipFiles', 'parseExportDate',
+    'extractAll', 'extractSocialGraph', 'fixMetaMojibakeDeep', 'fixMetaMojibakeString', 'loadZipFiles', 'parseExportDate',
   ]);
   for (const k of Object.keys(parser)) assert.equal(typeof parser[k], 'function', k);
 });
