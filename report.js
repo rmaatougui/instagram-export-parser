@@ -86,34 +86,22 @@
   const IG_BASE_CPM = 12;  // kept for back-compat refs; ACTIVE_PLATFORM.cpm is canonical
   const ADS_SEEN_PER_LIKE = 3;
 
-  const OFF_META_DOMAINS = {
-    '1800flowers': '1800flowers.com', 'adobe': 'adobe.com', 'amazon': 'amazon.com',
-    'anthropic': 'anthropic.com', 'apartmenttherapy.com': 'apartmenttherapy.com',
-    'athletic greens': 'athleticgreens.com', 'blizzard entertainment': 'blizzard.com',
-    'booking.com': 'booking.com', 'brightline': 'gobrightline.com',
-    'broadway direct': 'broadwaydirect.com', 'bumble dating app: meet & date': 'bumble.com',
-    'cardplayer.com': 'cardplayer.com', 'chess - play & learn': 'chess.com',
-    'chess.com': 'chess.com', 'cirquedusoleil.com': 'cirquedusoleil.com',
-    'codeway': 'codeway.co', 'criteo us': 'criteo.com', "domino's pizza inc": 'dominos.com',
-    'doordash': 'doordash.com', 'elemental labs': 'drinklmnt.com',
-    'expedia group organic social': 'expedia.com', 'fanatics, inc.': 'fanatics.com',
-    'feverup.com': 'feverup.com', 'forbes.com': 'forbes.com',
-    'function health': 'functionhealth.com', 'hellohabit - daily planner': 'hellohabit.com',
-    'hellohabit - habit tracker': 'hellohabit.com', 'hotels.com': 'hotels.com',
-    'instacart': 'instacart.com', 'letterboxd': 'letterboxd.com', 'lyft': 'lyft.com',
-    'miamiopen.com': 'miamiopen.com', 'mud\\wtr': 'mudwtr.com', 'mudwtr.com': 'mudwtr.com',
-    'myfitnesspal: calorie counter': 'myfitnesspal.com', 'opentable': 'opentable.com',
-    'prenuvo.com': 'prenuvo.com', 'reality labs': 'meta.com',
-    'robinhood markets inc. & robinhood financial llc': 'robinhood.com',
-    'seminole hard rock digital, llc': 'hardrockdigital.com',
-    'soundcloud: the music you love': 'soundcloud.com',
-    'spotify: music and podcasts': 'spotify.com', 'strava: run, bike, hike': 'strava.com',
-    'stubhub': 'stubhub.com', 'stubhub.com': 'stubhub.com', 't-mobile usa': 't-mobile.com',
-    'the wall street journal. news': 'wsj.com', 'thescore: sports news & scores': 'thescore.com',
-    'tiktok': 'tiktok.com', 'tiktok - videos, shop & live': 'tiktok.com',
-    'uber - request a ride': 'uber.com', 'ugg': 'ugg.com', 'walmart.com': 'walmart.com',
-    'zillow': 'zillow.com',
-  };
+  // A 53-entry advertiser-name -> domain table used to live here, feeding an
+  // appDomain() helper just below it. Both are gone (2026-09-09).
+  //
+  // The table had to go because its MEMBERSHIP was the leak: those 53 were the
+  // advertisers that happened to appear in ONE person's export, so the list read
+  // as a profile of them -- the games they played, the dating app they used, the
+  // supplements they bought, the city their train line runs through. A reader
+  // learned nothing about parsing and something about a stranger. Same shape as
+  // the ~165 handles removed from clusterAdImpressions in 2026-07. The parser
+  // carries no real-world data.
+  //
+  // Nothing regressed, because appDomain() had NO caller anywhere in the repo.
+  // Real domains come from the link URLs in the export itself, parsed with
+  // `new URL(...).hostname` in extractAdImpressions -- the correct source, and
+  // untouched by this. If favicon coverage for named-but-not-domain advertisers
+  // is ever wanted, it needs public reference data, not one archive.
 
   const EVENT_GLOSSARY = {
     'PURCHASE': 'Completed a purchase on their site/app',
@@ -259,27 +247,6 @@
 
   function pad2(n) { return String(n).padStart(2, '0'); }
 
-  function isLatin(s) {
-    if (!s) return false;
-    let latin = 0;
-    for (const c of String(s)) {
-      if (c.charCodeAt(0) < 256) latin++;
-    }
-    return latin / s.length > 0.85;
-  }
-
-  function appDomain(name) {
-    if (!name) return null;
-    const key = name.toLowerCase().trim();
-    // Own-property check — an app literally named "constructor" used to
-    // return Object.prototype.constructor as its "domain".
-    if (Object.prototype.hasOwnProperty.call(OFF_META_DOMAINS, key) && OFF_META_DOMAINS[key]) return OFF_META_DOMAINS[key];
-    // Name already looks like a domain?
-    if (name.indexOf('.') >= 0 && name.indexOf(' ') < 0 && isLatin(name)) {
-      return name.toLowerCase();
-    }
-    return null;
-  }
 
   function parseExportDate(files) {
     // Try the root prefix first (for ZIPs that wrap everything in instagram-<user>-<date>/)
@@ -892,7 +859,7 @@
   // passport reads its request/completion timing from extractWindow, which
   // parses this SAME file). Kept anyway: it carries fields extractWindow does
   // not (total_requests, and the all-history sentinel handling), and it has a
-  // dedicated test suite in tests/parser/identity.test.js. Flagged as an
+  // dedicated test suite covering identity. Flagged as an
   // unconsumed key by the 2026-08-01 HTML audit; deleting it means deleting
   // those tests too, so it is a deliberate decision, not a sweep. (2026-08-02)
   function extractDownloadRequest(files) {
@@ -2278,7 +2245,7 @@
   // validator (tools/parser-validator/check.js) asserts this count against the
   // real export on every `npm run diff-check`, so deleting it breaks that tool
   // (2026-08-02, after the 2026-08-01 HTML audit flagged it as an unconsumed
-  // key). CLAUDE.md's line that muted creators "surface in the Subscriptions
+  // key). The product rule that muted creators "surface in the Subscriptions
   // tab" is stale — that tab can never mount today, see extractSubscriptionStatus
   // above. Surface it or drop the pair deliberately; not in a prune sweep.
   //
@@ -2573,7 +2540,7 @@
     // been read honestly: Instagram prices no clicks, the count behind it is
     // outbound LINK taps rather than ad taps, and the CPC that would turn it
     // into money has no source. That is why the dashboard's click line was
-    // removed on 2026-08-06 (dev/VALUE-36-FIX-PLAN-2026-08-06.md) -- this was
+    // removed on 2026-08-06 -- this was
     // the producer nobody switched off with it. The raw ads_clicked_count and
     // its source window are still emitted below; a consumer that finds an
     // honest basis for annualizing them can do it there.
@@ -3750,7 +3717,7 @@
     // 60 days whenever the follow list does (a complete list on an account
     // older than the window contains old followers; a brand-new account has
     // nothing old on either side and passes). Anything short of that stays an
-    // honest empty state with the reason, never a wrong list (CLAUDE.md rule
+    // honest empty state with the reason, never a wrong list (the project rule
     // 5). Deactivated accounts are a caveat, not a gate: following.json keeps
     // edges to accounts Meta has since disabled, nothing in the export says
     // which, so the card says so in words and links each name. Matching is
@@ -4231,13 +4198,13 @@
     // under feed_impressions or advertisers, monthly figures that are the
     // daily ones times thirty, ad_revenue (a second name for total), and
     // likes_per_year, a hard zero kept for a "legacy render branch and the
-    // analyst context builder" that do not read it -- netlify/functions/
+    // analyst context builder" that do not read it -- the server-side
     // explain.js never touches this object. Seventeen unread fields beside
     // a handful of load-bearing ones is how a later reader ends up preserving
     // the wrong ones.
     //
     // WHO READS WHAT. Rechecked 2026-09-08, and it had already moved: the
-    // 2026-09-07 version of this block said _ledger-build.js read four of these
+    // 2026-09-07 version of this block said the ledger builder read four of these
     // five. It merged the same day as the ledger's flat-rate removal, which
     // deleted those reads, so the map was stale within hours of being written.
     // The point of this block is to stop a later reader preserving the wrong
@@ -4245,10 +4212,10 @@
     //
     //   total              -> report/instagram/v2/v2-data-adapter.js (fallback
     //                         when math.cpmRevenueUsd is absent) and
-    //                         tests/ledger/report-integration.test.js.
+    //                         the ledger's own integration tests.
     //                         LIVE.
-    //   annual_impressions -> netlify/functions/_ledger-build.js:537,539. LIVE.
-    //   daily_ads          -> netlify/functions/_ledger-build.js:543. LIVE.
+    //   annual_impressions -> read by the ledger builder. LIVE.
+    //   daily_ads          -> read by the ledger builder. LIVE.
     //   daily_revenue      -> NO live reader. Kept so the dollars this function
     //                         emits stay checkable by hand against daily_ads
     //                         and ad_cpm.
@@ -4256,17 +4223,17 @@
     //                         the only rate that makes `total` recomputable.
     //                         READ THIS BEFORE REUSING IT -- it is report.js's
     //                         flat market tier, the basis the ledger BANNED on
-    //                         2026-09-01. _ledger-build.js now names it only in
+    //                         2026-09-01. The ledger builder now names it only in
     //                         comments explaining that it refuses to price at
     //                         it. Nothing downstream should start pricing here.
     //   platform           -> no reader, and it stays anyway: it is the only
     //                         thing in this object that says which engine
     //                         produced the numbers, and report.js ships as a
-    //                         public parser (dev/opensource-parser/).
+    //                         public parser.
     //
     // So two of the six emitted fields have no consumer today and are kept
     // deliberately, for auditability rather than for a caller. Dropping them is
-    // a further breaking change to the published parser output and is Robert's
+    // a further breaking change to the published parser output and is the owner's
     // call, not a tidy-up.
     //
     // Nothing is lost. Every removed field is still derivable from what the
@@ -4364,7 +4331,7 @@
     loadZipFiles,
     extractAll,
     parseExportDate,
-    // Exposed for tests/adapter/not-following-back.test.js, which feeds
+    // Exposed for the adapter's not-following-back tests, which feed
     // hand-built export files through the REAL extractor (fixture-free, so it
     // can gate the build). Browser-harmless extra method.
     extractSocialGraph,

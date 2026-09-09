@@ -1,6 +1,6 @@
 {
   "name": "instagram-export-parser",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "The parser behind opt2in.com's Instagram report: reads a Meta data export ZIP into a plain object, in the browser or under Node, with no dependencies and no network calls.",
   "license": "AGPL-3.0-only",
   "author": "OPT2IN LLC",
