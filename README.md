@@ -1,10 +1,10 @@
 # instagram-export-parser
 
 The parser behind the Instagram report at [opt2in.com](https://opt2in.com),
-published as the one file it is: `report.js`, 4345 lines, no
+published as the one file it is: `report.js`, 4341 lines, no
 dependencies, and byte-for-byte the file the site serves at
 `https://opt2in.com/report/instagram/report.js` on the day of this build
-(2026-09-09; SHA-256 `bd564325ec66cc40af89cd1bc5bdf902526ab6e2f9f27978f9ec3a3ce5d16e8a`).
+(2026-09-09; SHA-256 `ba5e8d98cd9d721ba44f38a6cb7456de2ffc0d59fa57178a26a3ec2cebd70185`).
 
 It takes the ZIP that Meta hands you when you download your Instagram
 information and turns it into a plain JavaScript object: who advertised to
@@ -43,7 +43,7 @@ grep -nwE 'fetch|XMLHttpRequest|sendBeacon|WebSocket|EventSource' report.js
 At the time of this build the second search returned:
 
 ```
-3775:// with NO network fetch (fetching would broadcast click history off-device
+3771:// with NO network fetch (fetching would broadcast click history off-device
 ```
 
 The only browser API the file touches is `DOMParser`, for the HTML variant
@@ -319,7 +319,7 @@ can never overwrite the recorded shape.
 
 ## Why one file
 
-`report.js` is one file of 4345 lines: an IIFE with about thirty
+`report.js` is one file of 4341 lines: an IIFE with about thirty
 private helpers, the 37 extractors, the `extractAll`
 orchestrator, and a six-function export guarded on `typeof module`. It is
 not split because the site has no build step, and without a bundler
@@ -332,6 +332,17 @@ true today. Keeping it as one file here also keeps the check that matters a
 one-line `diff`.
 
 ## Changes since 1.0.0
+
+**2.1.0** — the interest vocabularies are rebuilt from household-name brands and
+plain category words. `clusterAdImpressions` and the click-interest rules used
+to carry token lists grown by reading one real export, so their membership
+described that person's advertisers rather than anything about parsing. A
+city-named bucket is deleted outright. Measured on a real export, the cluster
+step now categorises fewer of that particular archive's advertisers and should
+generalise better to any other. Comments no longer quote statistics measured
+from real archives, or the nationality and export date of the people who
+contributed them.
+
 
 **2.0.1** — removals only, no API change. A 53-entry advertiser-name → domain
 table and the `appDomain()` helper it fed are gone. The helper had no caller, so

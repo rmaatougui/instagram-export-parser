@@ -187,14 +187,14 @@
   // THE HASHTAGS HAZARD (2026-08-02 — a regression this helper itself shipped,
   // caught before it reached a user report). The first version of this comment
   // asserted "a sibling Hashtags block is an empty dict, excluded by the
-  // dict[0].dict guard". That is FALSE for the real export. Measured on
-  // stories_viewed.json: 354 of 588 entries carry a POPULATED Hashtags block
-  // that appears BEFORE the Owner block, shaped as N dict GROUPS of a single
-  // {label:'Name', value:'solotravel'} field and no URL — structurally
+  // dict[0].dict guard". That is FALSE for real exports: a large share of
+  // stories_viewed.json entries carry a POPULATED Hashtags block that appears
+  // BEFORE the Owner block, shaped as N dict GROUPS of a single
+  // {label:'Name', value:'<tag>'} field and no URL — structurally
   // indistinguishable from an owner card unless you look at what it yields.
   // Taking the first populated dict therefore picked Hashtags, produced no
-  // username, and the callers' `if (owner && owner.username)` dropped the row:
-  // 1,378 -> 695 unique creators on posts+videos, 488 -> 196 on stories.
+  // username, and the callers' `if (owner && owner.username)` dropped the row,
+  // roughly halving the unique-creator count on both posts+videos and stories.
   //
   // So the contract is now: a block is an owner block ONLY if it yields a
   // USERNAME. Two guards enforce that, and both matter —
@@ -693,7 +693,7 @@
     if (d) {
       // label_values entries in Meta's export follow a stable ORDER regardless
       // of locale. Labels are localized so we can't match by string. Inferred
-      // order (verified Russian export, 2026-04-23):
+      // order (verified against a non-English export):
       //   [0] Request completion time (timestamp_value)
       //   [1] How many times did you try to download (value: string number)
       //   [2] Start date (timestamp_value)
@@ -850,7 +850,7 @@
   // understand the request-to-ready latency for their own export.
   //
   // Shape handling:
-  //   - a real 2026-05-12 export: single object at the top level
+  //   - the common case: a single object at the top level
   //   - Future-proofed for an array of request objects (filename is plural)
   //
   // The "Start date" sentinel -2048515200 (~year 1905) is Meta's "all history"
@@ -1168,7 +1168,7 @@
         if (!out.email && /^[\w.+-]+@[\w.-]+\.\w+$/.test(p.value)) { out.email = p.value; claimed.add(p.key); break; }
       }
       // Phone (starts with + or digit, length ≥ 7). Exclude date-shaped
-      // values — "1985-04-12" matches the phone pattern but is the DOB,
+      // values — a "YYYY-MM-DD" string matches the phone pattern but is the DOB,
       // which the next loop claims.
       for (const p of pairs) {
         if (claimed.has(p.key)) continue;
@@ -1403,7 +1403,7 @@
 
   function extractLocation(files) {
     const out = { profile_city: '', gps: null, interests: [], interests_explanation: '' };
-    // 2026-05-31: a real-user export was returning empty profile_city
+    // 2026-05-31: an export was returning empty profile_city
     // even though the file existed in that archive — Meta appears to have
     // moved profile_based_in.json out of /information_about_you/ in newer
     // exports. Add a filename-suffix fallback so we find the file no
@@ -1440,10 +1440,10 @@
       //   label_values[0].label = "Location"
       //   label_values[0].dict = [{label:"Country",value:"..."},
       //                           {label:"Region",value:"..."},
-      //                           {label:"City",value:"Miami, Florida"}]
+      //                           {label:"City",value:"<city>, <state>"}]
       // The C/R/C dict is the user's CONFIRMED home city, far more
-      // authoritative than locations_of_interest[0] (which is just the
-      // first of ~12 cities Meta inferred). Prefer this when present.
+      // authoritative than locations_of_interest[0] (which is just the first
+      // of the many cities Meta inferred). Prefer this when present.
       if (!out.profile_city && Array.isArray(pb.label_values)) {
         for (const lv of pb.label_values) {
           if (Array.isArray(lv.dict)) {
@@ -1512,8 +1512,8 @@
   }
 
   function parsePct(s) {
-    // Names can contain commas ("Miami, Florida: 12.3%, New York, New York:
-    // 8.1%") — split on the % that ENDS each pair, not on every comma, or the
+    // Names can contain commas ("Springfield, Illinois: 12.3%, Riverton,
+    // Wyoming: 8.1%") — split on the % that ENDS each pair, not every comma, or the
     // city fragment gets discarded and the row is mislabeled with the state.
     // Also accept comma decimals ("12,3%") from non-English locales.
     const out = [];
@@ -1635,7 +1635,7 @@
   // SAME date_range field per Meta's quarterly insights cadence — when all
   // three are present the report can show "creator stats for Feb-May 2026"
   // once and align all three blocks. Returns flat ints + raw delta strings
-  // (deltas come as "-68.8% vs Nov 13 - Feb 10" — keep raw so the renderer
+  // (deltas come as "-12.3% vs <start> - <end>" — keep raw so the renderer
   // can split into magnitude + comparison window).
   function _ciToInt(s) {
     const n = parseInt(String(s).replace(/[^\d-]/g, ''), 10);
@@ -1719,7 +1719,7 @@
         // Localized-label fallback: Meta translates label_values labels by the
         // account's IG language (Russian "Интерес", etc.), so a hard
         // === 'Interest' match silently dropped EVERY interest for non-English
-        // exports (the bug a Belarusian export surfaced 2026-07-01). When no
+        // exports (a bug a non-English export surfaced 2026-07-01). When no
         // English label matched this entry, take its first value-bearing
         // label_value instead — same locale-agnostic approach the rest of the
         // parser uses (lvFirstWithValue / smFirstValue / lvFirstWithVec).
@@ -2034,10 +2034,10 @@
     const unique = Array.from(byName.values()).sort((a, b) =>
       a.name.toLowerCase().localeCompare(b.name.toLowerCase())
     );
-    // Length + non-symbol filter only. The old isLatin() filter dropped
-    // ~69 valid Cyrillic / Chinese / Arabic brand names from the table,
-    // creating a "5,742 advertisers" headline vs "5,673 in the table"
-    // discrepancy (flagged 2026-05). Non-Latin advertisers are
+    // Length + non-symbol filter only. An earlier Latin-script filter dropped
+    // valid Cyrillic / Chinese / Arabic brand names from the table, so the
+    // headline advertiser count disagreed with the table beneath it
+    // (flagged 2026-05). Non-Latin advertisers are
     // real custom-audience entries — show them.
     const shownObjects = unique.filter(r =>
       r.name.length >= 2 && !/^[\d\W]+$/.test(r.name)
@@ -2060,7 +2060,7 @@
     if (d) {
       // JSON path — handle BOTH schema shapes:
       //   (A) Old direct shape: { apps_and_websites_off_meta_activity: [{name, events: [{type, timestamp}]}] }
-      //   (B) New array shape: [{title: "ASOS.com", label_values: [{label:"ID", value}, {label:"Events"(localized), vec: [{dict: [{label:"ID",value},{label:"Event"(localized), value:"VIEW_CONTENT"}, {label:"Received"(localized), timestamp_value}]}]}]}]
+      //   (B) New array shape: [{title: "<merchant>", label_values: [{label:"ID", value}, {label:"Events"(localized), vec: [{dict: [{label:"ID",value},{label:"Event"(localized), value:"VIEW_CONTENT"}, {label:"Received"(localized), timestamp_value}]}]}]}]
       const out = [];
       const records = Array.isArray(d)
         ? d
@@ -2280,7 +2280,7 @@
     //   (B) Object { likes_media_likes: [...] }
     //   (C) Object with NUMBERED keys "0", "1", "2", ... each holding
     //       an entry with timestamp + label_values. This is the
-    //       2026-05-12+ export format Meta uses; an earlier parser
+    //       newer export format Meta uses; an earlier parser
     //       returned 0 entries because neither (A) nor (B) matched.
     function entriesFromMixedShape(raw) {
       if (!raw) return [];
@@ -2454,8 +2454,8 @@
     //    (annualize via the sibling feed-file window in that case).
     //  · Fallback: (posts + videos) × 1/6 sponsored-ratio when ads_viewed
     //    is missing or empty. S6 (2026-08-07): this was 1/3 with nothing behind
-    //    it. The one export we can measure end to end says 1 in 6 — 690 ads
-    //    inside 4,131 feed items over the same window — so 1/3 was doubling the
+    //    it. The one export we could measure end to end came out near 1 in 6,
+    //    so 1/3 was doubling the
     //    assumed ad load of every export without an ads file. Re-cut the
     //    constant as more real exports arrive; it is a one-sample median, not a
     //    published benchmark. The v2 adapter's estimate branch carries the same
@@ -2765,7 +2765,7 @@
   // load pipeline (fixMetaMojibakeDeep on every parsed file), so no extra
   // decoding happens here. Returns null when the file is absent OR carries no
   // usable rows — the COMMON case: Meta caps this file around 7 days and often
-  // omits it entirely (the owner's own export has none), so the dashboard shows
+  // omits it entirely (measured exports have had none), so the dashboard shows
   // an honest empty state rather than an error.
   function extractClickedAds(files) {
     const raw = loadJson(files, 'ads_information/ads_and_topics/ads_clicked.json');
@@ -2853,30 +2853,25 @@
     // The test is not "would this brand advertise to me" but "could many
     // unrelated people see this ad". When unsure, leave it out: a missing token
     // costs one uncategorized brand, a personal one publishes somebody's life.
-    // scripts/scan-public-files.js holds the removed names so they cannot
+    // The gate's served-file scan holds the removed names so they cannot
     // return.
     const RULES = [
-      { key: 'ai_productivity', label: 'AI & productivity', re: /openai|chatgpt|perplexity|claude|anthropic|microsoftdeveloper|pickaxe|opinly|audiencelab|codex|tldr|rundown\.ai/i },
-      { key: 'finance', label: 'Personal finance', re: /rocketmoney|maxrewards|monarch|capitalone|americanexpress|imprint|autopilot|upgradedpoints|finimize|\bstripe\b|\bvisa\b|progressive|kalshi|wallstreet/i },
-      { key: 'poker', label: 'Poker', re: /poker|clubwpt|runitonce|upswing|offsuit|runout|bbopoker/i },
-      { key: 'tennis', label: 'Tennis', re: /tennis|acemate|tenniix|swingvision|playyourcourt|pongbot/i },
+      { key: 'ai_productivity', label: 'AI & productivity', re: /openai|chatgpt|perplexity|claude|anthropic|gemini|copilot|midjourney|notion|grammarly|canva|codex/i },
+      { key: 'finance', label: 'Personal finance', re: /capitalone|americanexpress|\bchase\b|citibank|wellsfargo|discover ?card|\bstripe\b|\bvisa\b|mastercard|paypal|progressive|geico|robinhood|coinbase|fidelity|vanguard|schwab|\bsofi\b|nerdwallet|creditkarma|quickbooks|turbotax|wallstreet/i },
+      { key: 'poker', label: 'Poker', re: /poker|wsop|888poker/i },
+      { key: 'tennis', label: 'Tennis', re: /tennis|babolat|yonex|atptour|wtatennis/i },
       // Prefix boundary (\bchess, not \bchess\b) so handle forms like
       // chesscom/chess24/chessbrah still match while "duchess" doesn't.
       { key: 'chess', label: 'Chess', re: /\bchess/i },
-      // "function" is Function Health — word-bound the bare token so
-      // "functional" doesn't land unrelated brands in Health & body. Three
-      // telehealth brands were dropped here despite being real companies:
-      // when a brand's whole inventory treats one condition, matching it
-      // records a diagnosis. Fitness hardware stays; treatment does not.
-      { key: 'health', label: 'Health & body', re: /whoop|functionhealth|\bfunction\b|eightsleep|nourish|peloton|gymreapers/i },
-      { key: 'luxury_travel', label: 'Luxury & travel', re: /assouline|chanel|gucci|mauijim|lexus|fourseasons|ritzcarlton|equinox|fora|industrious|enchantingtravels|polarsteps/i },
-      { key: 'pets', label: 'Pets', re: /fi\.tracking|cuddleclones|embroidog|brickpaws|smalls|purina|puppyyoga|petsonalised/i },
-      // The city name only. The venue handles that used to be here were a map
-      // of one person's week.
-      { key: 'miami_local', label: 'Miami local', re: /miami/i },
-      { key: 'news_media', label: 'News & media', re: /nytimes|nypost|hbomax|paramountplus|diaryofaceo/i },
-      { key: 'b2b_saas', label: 'B2B software', re: /ripplinghq|getdeel|godaddy|bluehost|firstbase|redditforbusiness|softwareadvice|coursera|wharton|mitprofessionaled|greatlearning|bostonu/i },
-      { key: 'fashion_apparel', label: 'Fashion & apparel', re: /jwpei|adidas|trueclassic|culturekings|onequince|stately|displate|riaeyewear|evenrealities|secretlab/i },
+      // Fitness hardware and general wellness only. A brand whose whole
+      // inventory treats ONE condition is deliberately excluded: matching it
+      // would record a diagnosis. Fitness stays; treatment does not.
+      { key: 'health', label: 'Health & body', re: /whoop|fitbit|garmin|peloton|nordictrack|myfitnesspal|strava|oura ?ring|gymshark|lululemon|planetfitness/i },
+      { key: 'luxury_travel', label: 'Luxury & travel', re: /chanel|gucci|prada|burberry|rolex|cartier|tiffany|louisvuitton|hermes|lexus|\bbmw\b|mercedes|fourseasons|ritzcarlton|marriott|hilton|hyatt|airbnb|expedia|booking\.com|tripadvisor|emirates|equinox/i },
+      { key: 'pets', label: 'Pets', re: /purina|chewy|petco|petsmart|pedigree|royalcanin|bluebuffalo|hillspet|barkbox/i },
+      { key: 'news_media', label: 'News & media', re: /nytimes|washingtonpost|\bwsj\b|bloomberg|reuters|\bcnn\b|\bbbc\b|nypost|netflix|hbomax|paramountplus|\bhulu\b|disneyplus|spotify/i },
+      { key: 'b2b_saas', label: 'B2B software', re: /salesforce|hubspot|\bslack\b|\bzoom\b|atlassian|shopify|squarespace|godaddy|bluehost|mailchimp|coursera|udemy|wharton|harvard/i },
+      { key: 'fashion_apparel', label: 'Fashion & apparel', re: /adidas|\bnike\b|\bpuma\b|underarmour|\bzara\b|uniqlo|levis|ralphlauren|tommyhilfiger|calvinklein|oldnavy|\basos\b|shein|warbyparker/i },
     ];
     const out = {};
     for (const rule of RULES) {
@@ -3055,13 +3050,14 @@
     for (const d of daily) if (!peak_day || d.total > peak_day.total) peak_day = d;
 
     // Caption-keyword topic inference. Each rule fires independently;
-    // a caption can match multiple. Buckets expanded from the prior
-    // videos_watched analysis (Comedy/Memes, Dating, Family, etc.) so
-    // we don't leave large swaths of feed content unbucketed.
+    // a caption can match multiple. The buckets cover the broad categories
+    // of feed content so large swaths do not go unbucketed. Every token is a
+    // plain category word or a household-name brand — never something whose
+    // presence would say whose archive the list was written against.
     const TOPIC_RULES = [
       { topic: 'Personal finance & investing', re: /\b(invest(?:ing|ment|or)?|stocks?|nasdaq|s&p ?500|nvda|tesla|tsla|aapl|spy|qqq|wall ?street|federal reserve|the fed|fomc|earnings|crypto|bitcoin|ethereum|trading|portfolio|broker(?:age)?|robinhood|coinbase|sofi|nyse|ipo|hedge fund|kalshi|options? trad|hedge)\b/i },
       { topic: 'AI & productivity tools',      re: /\b(chatgpt|openai|anthropic|claude|perplexity|llm|prompt engineering|cursor|copilot|midjourney|stable diffusion|generative ai|ai (?:tool|app|model|agent))\b/i },
-      { topic: 'Poker & casino',               re: /\b(poker|hold[- ]?em|wsop|wpt|clubwpt|texas hold|chip leader|final table|pocket aces|pocket kings|all[- ]?in|bluff|tournament play|casino|blackjack|roulette)\b/i },
+      { topic: 'Poker & casino',               re: /\b(poker|hold[- ]?em|wsop|wpt|texas hold|chip leader|final table|pocket aces|pocket kings|all[- ]?in|bluff|tournament play|casino|blackjack|roulette)\b/i },
       // "wow" dropped — the bare exclamation is one of the most common
       // caption words and inflated Gaming for non-gamers.
       { topic: 'Gaming',                       re: /\b(dota ?2|apex legends|league of legends|fortnite|valorant|esports|twitch stream|gameplay|raid boss|patch notes|world of warcraft)\b/i },
@@ -3108,7 +3104,7 @@
     // Density of these phrases is a publishable proof that Meta has
     // clustered you into the finance-attuned audience: the algorithm
     // serves you content from creators who write disclaimers, even if
-    // you've never said the word "stocks" yourself. Prior chat finding.
+    // you've never said the word "stocks" yourself.
     const DISCLAIMER_PHRASES = [
       /not financial advice/i,
       /for educational purposes/i,
@@ -3152,7 +3148,7 @@
     const capsBase = allCaptions.length || 1;
     // topicHitTotal = sum of topic hits: the correct denominator for each
     // interest's share of CLASSIFIED signal. Dividing by all captions deflated
-    // each topic to near-zero (a heavy football fan read "Sports 2.1%"). count
+    // each topic to near-zero — a heavy football fan read low single digits. count
     // drives the bars; pct is kept correct in case it's surfaced.
     const topicHitTotal = Object.values(topicCounts).reduce((a, b) => a + b, 0) || 1;
     const behavior_topics = Object.entries(topicCounts)
@@ -3194,8 +3190,8 @@
     // Outbound domain aggregation across ALL organic creators (not just
     // top 50). Mirrors extractAdImpressionsDetail.domains — surfaces the
     // raw monetization plumbing: linktr.ee = X creators, beacons.ai = Y,
-    // etc. ~30% of impressions in the prior chat routed through bio-link
-    // aggregators — that's a real "you ARE the creator economy" stat.
+    // etc. A large share of impressions routes through bio-link aggregators —
+    // that is a real "you ARE the creator economy" stat.
     const organicDomainMap = new Map();
     for (const c of creatorMap.values()) {
       if (!c.url) continue;
@@ -3357,9 +3353,9 @@
 
   // Plan Phase A.1: Threads block. Walks all 7 files in
   // your_instagram_activity/threads/* and emits a unified social-graph +
-  // consumption shape for the Threads tab. Per the plan: "1,294 threads
-  // viewed with per-author tally — the cleanest single interest signal in
-  // the archive." All Threads wrappers prefix `text_post_app_` so we walk
+  // consumption shape for the Threads tab. Threads views with a per-author
+  // tally are among the cleanest single interest signals in the archive.
+  // All Threads wrappers prefix `text_post_app_` so we walk
   // them tolerantly: each file has one root array under a known key.
   function _thWalkEntries(d, knownKeys) {
     if (!d) return [];
@@ -3906,17 +3902,17 @@
     // telehealth names came out of the health bucket on 2026-07-31 for that
     // reason, along with a handful of single-creator handles.
     const CLICK_INTEREST_RULES = [
-      { key: 'ai_productivity', label: 'AI & productivity', re: /openai|chatgpt|perplexity|claude|anthropic|gemini|copilot|jasper|midjourney|stable diffusion/i },
-      { key: 'fashion',         label: 'Fashion & apparel',  re: /quince|gucci|chanel|jwpei|trueclassic|adidas|stately|culturekings|shirt|\btees?\b|hoodie|sneakers|jeans/i },
-      { key: 'art',             label: 'Art & prints',        re: /saatchi|society6|displate|redbubble|etsy.*art|gallery|\bprints?\b/i },
-      { key: 'wearables_tech',  label: 'Wearable tech',       re: /evenrealities|smart glasses|whoop|apple watch|garmin|oura|fitbit/i },
+      { key: 'ai_productivity', label: 'AI & productivity', re: /openai|chatgpt|perplexity|claude|anthropic|gemini|copilot|midjourney|notion|canva/i },
+      { key: 'fashion',         label: 'Fashion & apparel',  re: /gucci|chanel|prada|adidas|\bnike\b|zara|uniqlo|asos|shein|shirt|\btees?\b|hoodie|sneakers|jeans/i },
+      { key: 'art',             label: 'Art & prints',        re: /saatchi|society6|redbubble|etsy.*art|gallery|\bprints?\b/i },
+      { key: 'wearables_tech',  label: 'Wearable tech',       re: /smart glasses|whoop|apple watch|garmin|oura|fitbit|samsung ?watch/i },
       { key: 'music_events',    label: 'Music & live events', re: /livenation|spotify|apple music|ticketmaster|concert|tour dates|festival/i },
-      { key: 'fitness_apps',    label: 'Fitness apps',        re: /peloton|nike training|strava|fitness|workout|gym/i },
-      { key: 'food_drink',      label: 'Food & drink',        re: /rumchata|jagermeister|tito'?s\b|titosvodka|cocktail|brewing|bourbon|whiskey|wine|coffee/i },
-      { key: 'gifts',           label: 'Gifts & personalized', re: /macorner|personalized|mother.?s? day|father.?s? day|gift/i },
-      { key: 'finance',         label: 'Personal finance',     re: /rocketmoney|maxrewards|monarch|sofi|robinhood|coinbase|kalshi|wealthfront|chase|investing/i },
-      { key: 'travel',          label: 'Travel & hotels',      re: /booking|expedia|airbnb|hotels|kayak|delta|united|four ?seasons|ritz|marriott/i },
-      { key: 'health',          label: 'Health & wellness',    re: /nourish|functionhealth|\bfunction\b|peloton|noom/i },
+      { key: 'fitness_apps',    label: 'Fitness apps',        re: /peloton|nike training|strava|myfitnesspal|fitness|workout|gym/i },
+      { key: 'food_drink',      label: 'Food & drink',        re: /doordash|ubereats|grubhub|starbucks|cocktail|brewing|bourbon|whiskey|wine|coffee|\bbeer\b/i },
+      { key: 'gifts',           label: 'Gifts & personalized', re: /personalized|mother.?s? day|father.?s? day|gift/i },
+      { key: 'finance',         label: 'Personal finance',     re: /sofi|robinhood|coinbase|wealthfront|chase|fidelity|vanguard|nerdwallet|creditkarma|investing/i },
+      { key: 'travel',          label: 'Travel & hotels',      re: /booking|expedia|airbnb|hotels|kayak|delta|united|four ?seasons|ritz|marriott|hilton/i },
+      { key: 'health',          label: 'Health & wellness',    re: /peloton|noom|weightwatchers|headspace|calm\b|wellness/i },
       { key: 'activism_culture',label: 'Activism & culture',   re: /aclu|change\.org|petition|advocacy/i },
       { key: 'tools',           label: 'Help & tools',         re: /help\.|support\.|customer-service|how to/i },
     ];
